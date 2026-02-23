@@ -1,0 +1,4 @@
+ollama
+pyyaml
+requests
+python-dotenv
