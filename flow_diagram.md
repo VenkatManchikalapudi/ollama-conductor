@@ -2,16 +2,19 @@
 
 ```mermaid
 graph TD
-    A[User Prompt via --prompt Argument] --> B[Orchestrator Llama 3.2 - Async]
-    B --> C[Plan Task: ANALYSIS, CODE, or BOTH]
-    C -->|ANALYSIS| D[Analyst Phi-4]
-    C -->|CODE| E[Coder Qwen]
-    C -->|BOTH| D
-    C -->|BOTH| E
-    D --> F[Analyst Report]
-    E --> G[Coder Output]
-    F --> H[Synthesis by Orchestrator - Async]
-    G --> H
-    H --> I[Final User-Friendly Response]
-    I --> J[Output Delivered to User]
+    A[User Prompt via --prompt Argument] --> B[Input Refinement for Clarity]
+    B --> C[Orchestrator Llama 3.2 - Async]
+    C --> D[Plan Task: ANALYSIS, CODE, or BOTH]
+    D -->|ANALYSIS| E[Analyst Phi-4]
+    D -->|CODE| F[Coder Qwen]
+    D -->|BOTH| E
+    D -->|BOTH| F
+    E --> G[Validate Analyst Response]
+    F --> H[Validate Coder Response]
+    G --> I[Analyst Report]
+    H --> J[Coder Output]
+    I --> K[Synthesis by Orchestrator - Async]
+    J --> K
+    K --> L[Final User-Friendly Response]
+    L --> M[Output Delivered to User]
 ```

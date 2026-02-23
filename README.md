@@ -24,9 +24,11 @@ All models are locally installed and managed using **Ollama**, ensuring fast and
 ## Workflow
 
 1. **User Prompt**: The user provides a query.
-2. **Task Planning**: The Orchestrator decides if the task requires analysis, coding, or both.
-3. **Task Delegation**: Tasks are delegated to the Analyst and/or Coder agents.
-4. **Synthesis**: Results are combined into a final user-friendly response.
+2. **Input Refinement**: The Orchestrator refines the input for clarity and specificity.
+3. **Task Planning**: The Orchestrator decides if the task requires analysis, coding, or both.
+4. **Task Delegation**: Tasks are delegated to the Analyst and/or Coder agents.
+5. **Validation and Iteration**: The Orchestrator validates agent responses and iterates if necessary.
+6. **Synthesis**: Results are combined into a final user-friendly response.
 
 ## Installation
 
@@ -65,6 +67,20 @@ python3 agents/orchestrator.py
 - `config.yaml`: Configuration file for models.
 - `flow_diagram.md`: Mermaid.js flow diagram of the workflow.
 - `.env`: Environment variables for API keys and model configurations.
+
+## Environment Variables
+
+The `.env` file should contain the following variables:
+
+- `SEARCH_API_KEY`: Your Google Custom Search API key.
+- `SEARCH_ENGINE_ID`: Your Google Custom Search Engine ID.
+
+Example `.env` file:
+
+```
+SEARCH_API_KEY=your_api_key
+SEARCH_ENGINE_ID=your_search_engine_id
+```
 
 ## Contributing
 
