@@ -2,6 +2,7 @@ import ollama
 import json
 from analyst import Analyst
 from coder import Coder
+import logging
 
 class Orchestrator:
     def __init__(self):
@@ -11,7 +12,7 @@ class Orchestrator:
         self.coder = Coder()
 
     def run(self, user_prompt):
-        print(f"\n🚀 Orchestrator (Llama 3.2) received: '{user_prompt}'")
+        logging.info(f"\n🚀 Orchestrator (Llama 3.2) received: '{user_prompt}'")
         
         # --- PHASE 1: PLANNING ---
         # We ask the model to return a structured JSON plan
@@ -22,20 +23,29 @@ class Orchestrator:
         Respond with ONLY a JSON object: {{"type": "ANALYSIS"|"CODE"|"BOTH", "reason": "why"}}
         """
         
-        response = ollama.chat(model=self.model, messages=[{'role': 'user', 'content': plan_prompt}])
-        # Note: In production, use a JSON parser. For this example, we'll assume valid output.
-        decision = response['message']['content']
-        print(f"📋 Decision: {decision}")
+        decision = None
+        for attempt in range(3):  # Retry up to 3 times
+            try:
+                response = ollama.chat(model=self.model, messages=[{'role': 'user', 'content': plan_prompt}])
+                decision = json.loads(response['message']['content'])
+                logging.info(f"📋 Decision: {decision}")
+                break
+            except (json.JSONDecodeError, KeyError) as e:
+                logging.warning(f"Attempt {attempt + 1}: Failed to parse JSON response. Retrying...")
+        
+        if decision is None:
+            logging.error("❌ Planning phase failed after 3 attempts.")
+            return "Error: Unable to process the request."
 
         # --- PHASE 2: DELEGATION ---
         results = []
         
-        if "ANALYSIS" in decision or "BOTH" in decision:
+        if "ANALYSIS" in decision.get("type", "") or "BOTH" in decision.get("type", ""):
             # Task the Analyst (Phi-4)
             analysis_result = self.analyst.run(user_prompt)
             results.append(f"ANALYST REPORT: {analysis_result}")
 
-        if "CODE" in decision or "BOTH" in decision:
+        if "CODE" in decision.get("type", "") or "BOTH" in decision.get("type", ""):
             # Task the Coder (Qwen)
             code_result = self.coder.run(user_prompt)
             results.append(f"CODER OUTPUT: {code_result}")

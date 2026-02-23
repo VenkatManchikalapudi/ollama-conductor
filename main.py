@@ -1,14 +1,19 @@
 import yaml
+import asyncio
+import logging
 from agents.orchestrator import Orchestrator
 
-def main():
+# Configure logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
+async def main():
     # 1. Initialize the Brain
     # The Orchestrator class should handle the internal creation 
     # of the Analyst and Coder instances.
     boss = Orchestrator()
 
-    print("--- 2026 Local Agent System Active ---")
-    print("Running on MacBook Air (Unified Memory Optimization)")
+    logging.info("--- 2026 Local Agent System Active ---")
+    logging.info("Running on MacBook Air (Unified Memory Optimization)")
     
     while True:
         user_input = input("\nUser: ")
@@ -18,15 +23,15 @@ def main():
         try:
             # 2. Let the Orchestrator manage the flow
             # It will plan (Llama 3.2), research (Phi-4), and code (Qwen 2.5)
-            response = boss.run(user_input)
+            response = await boss.run(user_input)
             
-            print("\n" + "="*40)
-            print("FINAL AGENT RESPONSE:")
-            print("="*40)
-            print(response)
+            logging.info("\n" + "="*40)
+            logging.info("FINAL AGENT RESPONSE:")
+            logging.info("="*40)
+            logging.info(response)
             
         except Exception as e:
-            print(f"❌ System Error: {e}")
+            logging.error(f"❌ System Error: {e}")
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
