@@ -5,6 +5,10 @@ from urllib.parse import urlencode
 import os
 import re
 import logging
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -15,6 +19,17 @@ class Analyst:
         self.model = "phi4-mini"
         self.search_api_key = os.getenv("SEARCH_API_KEY", "")
         self.search_engine_id = os.getenv("SEARCH_ENGINE_ID", "")
+
+        # Debug logging for API key and search engine ID
+        if not self.search_api_key:
+            logging.warning("SEARCH_API_KEY is not set or empty.")
+        else:
+            logging.info("SEARCH_API_KEY successfully retrieved.")
+
+        if not self.search_engine_id:
+            logging.warning("SEARCH_ENGINE_ID is not set or empty.")
+        else:
+            logging.info("SEARCH_ENGINE_ID successfully retrieved.")
 
     def validate_input(self, input_data):
         """Validate and preprocess user input."""
