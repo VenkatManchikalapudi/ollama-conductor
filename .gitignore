@@ -68,3 +68,4 @@ pip-delete-this-directory.txt
 *.orig
 *.rej
 *.sublime-workspace
+.env
