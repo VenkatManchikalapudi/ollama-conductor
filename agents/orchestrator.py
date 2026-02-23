@@ -1,8 +1,9 @@
 import ollama
 import json
-from analyst import Analyst
-from coder import Coder
+from .analyst import Analyst
+from .coder import Coder
 import logging
+import asyncio
 
 class Orchestrator:
     def __init__(self):
@@ -11,11 +12,10 @@ class Orchestrator:
         self.analyst = Analyst()
         self.coder = Coder()
 
-    def run(self, user_prompt):
+    async def run(self, user_prompt):
         logging.info(f"\n🚀 Orchestrator (Llama 3.2) received: '{user_prompt}'")
         
         # --- PHASE 1: PLANNING ---
-        # We ask the model to return a structured JSON plan
         plan_prompt = f"""
         User Request: {user_prompt}
         
@@ -26,7 +26,7 @@ class Orchestrator:
         decision = None
         for attempt in range(3):  # Retry up to 3 times
             try:
-                response = ollama.chat(model=self.model, messages=[{'role': 'user', 'content': plan_prompt}])
+                response = await asyncio.to_thread(ollama.chat, model=self.model, messages=[{'role': 'user', 'content': plan_prompt}])
                 decision = json.loads(response['message']['content'])
                 logging.info(f"📋 Decision: {decision}")
                 break
@@ -41,17 +41,14 @@ class Orchestrator:
         results = []
         
         if "ANALYSIS" in decision.get("type", "") or "BOTH" in decision.get("type", ""):
-            # Task the Analyst (Phi-4)
-            analysis_result = self.analyst.run(user_prompt)
+            analysis_result = await asyncio.to_thread(self.analyst.run, user_prompt)
             results.append(f"ANALYST REPORT: {analysis_result}")
 
         if "CODE" in decision.get("type", "") or "BOTH" in decision.get("type", ""):
-            # Task the Coder (Qwen)
-            code_result = self.coder.run(user_prompt)
+            code_result = await asyncio.to_thread(self.coder.run, user_prompt)
             results.append(f"CODER OUTPUT: {code_result}")
 
         # --- PHASE 3: SYNTHESIS ---
-        # Send all worker results back to Llama 3.2 for a final user-friendly summary
         synthesis_prompt = f"""
         Original User Request: {user_prompt}
         
@@ -61,7 +58,7 @@ class Orchestrator:
         Task: Create a final, cohesive response for the user in simple English.
         """
         
-        final_answer = ollama.chat(model=self.model, messages=[{'role': 'user', 'content': synthesis_prompt}])
+        final_answer = await asyncio.to_thread(ollama.chat, model=self.model, messages=[{'role': 'user', 'content': synthesis_prompt}])
         return final_answer['message']['content']
 
 if __name__ == "__main__":
