@@ -5,7 +5,7 @@
 The Multi-Agent Orchestrator is a Python-based system that coordinates tasks between multiple agents to handle complex workflows. It uses:
 
 - **Orchestrator (Llama 3.2)**: Plans and delegates tasks.
-- **Analyst (Phi-4)**: Performs data analysis and research.
+- **Analyst (Phi-4)**: Performs data analysis and research with enhanced input validation, response guardrails, and error handling.
 - **Coder (Qwen)**: Generates code based on user requirements.
 
 All models are locally installed and managed using **Ollama**, ensuring fast and secure processing without relying on external APIs.
@@ -16,6 +16,10 @@ All models are locally installed and managed using **Ollama**, ensuring fast and
 - Integration with local models (Ollama).
 - Web search capabilities for data enrichment.
 - Python script generation for coding tasks.
+- **Enhanced Guardrails**:
+  - Input validation to ensure clarity and prevent errors.
+  - Response validation to ensure relevance and quality.
+  - Fallback mechanisms for ambiguous or invalid inputs.
 
 ## Workflow
 
@@ -56,7 +60,7 @@ python3 agents/orchestrator.py
 
 - `agents/`
   - `orchestrator.py`: Main orchestrator logic.
-  - `analyst.py`: Analyst agent logic.
+  - `analyst.py`: Analyst agent logic with guardrails for input validation and response handling.
   - `coder.py`: Coder agent logic.
 - `config.yaml`: Configuration file for models.
 - `flow_diagram.md`: Mermaid.js flow diagram of the workflow.
