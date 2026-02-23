@@ -1,0 +1,13 @@
+models:
+  orchestrator:
+    name: "llama3.2:latest"
+    temperature: 0.1 # Keep the boss focused
+    num_ctx: 4096
+  coder:
+    name: "qwen2.5-coder:7b"
+    temperature: 0.2 # Precise code generation
+    num_ctx: 8192
+  analyst:
+    name: "phi4-mini:latest"
+    temperature: 0.7 # Creative for research
+    num_ctx: 16384
